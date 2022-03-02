@@ -1,5 +1,5 @@
 <?php
-header("Access-Control-Allow-Origin: https://dckap2.mybigcommerce.com");
+header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: Content-Type, origin");
 header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
 
