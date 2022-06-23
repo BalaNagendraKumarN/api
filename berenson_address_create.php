@@ -5,18 +5,7 @@ header("Access-Control-Allow-Methods: HEAD, GET, POST, PUT, PATCH, DELETE, OPTIO
 header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method,Access-Control-Request-Headers, Authorization, x-xsrf-token");
 header('Content-Type: application/json');
 $method = $_SERVER['REQUEST_METHOD'];
-if ($method == "OPTIONS") {
-header('Access-Control-Allow-Origin: *');
-header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method,Access-Control-Request-Headers, Authorization,x-xsrf-token");
-header("HTTP/1.1 200 OK");
-die();
-}
 
-
-// Only allow POST requests
-if (strtoupper($_SERVER['REQUEST_METHOD']) != 'POST') {
-  throw new Exception('Only POST requests are allowed');
-}
 
 // Make sure Content-Type is application/json 
 $content_type = isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : '';
@@ -29,32 +18,27 @@ $body = file_get_contents("php://input");
 
 $array = json_decode($body,TRUE);
 
-// echo"<pre>";print_r($array);echo"</pre>";exit;
 
-$cart_id = $array['cart_id'];
-$item_id = $array['item_id'];
-$quatity = $array['quatity'];
-$prod_id = $array['product_id'];
-$price = $array['price'];
-// $total_price = $price / $quatity;
 $curl = curl_init();
 
-$post_data=array();
-$post_data["line_item"]['quantity'] = $quatity;
-$post_data["line_item"]['product_id'] = $prod_id;
-$post_data["line_item"]['list_price'] = $price;
 
+// echo"<pre>";print_r($array);echo"</pre>";exit;
+
+$post_data = array();
+$post_data = $array;
 $post_data=json_encode($post_data);
+
+// print_r($post_data);exit;
 
 
 curl_setopt_array($curl, [
-  CURLOPT_URL => "https://api.bigcommerce.com/stores/vwzwxvrrjw/v3/carts/".$cart_id."/items/".$item_id."",
+  CURLOPT_URL => "https://api.bigcommerce.com/stores/vwzwxvrrjw/v3/customers/addresses",
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_ENCODING => "",
   CURLOPT_MAXREDIRS => 10,
   CURLOPT_TIMEOUT => 30,
   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-  CURLOPT_CUSTOMREQUEST => "PUT",
+  CURLOPT_CUSTOMREQUEST => "POST",
   CURLOPT_POSTFIELDS => $post_data,
   CURLOPT_HTTPHEADER => [
     "Accept: application/json",
@@ -73,7 +57,4 @@ if ($err) {
 } else {
   echo $response;
 }
-
-
-echo json_encode($response);
 ?>
